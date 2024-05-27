@@ -17,18 +17,7 @@ class GazeModel(nn.Module):
             # nn.Conv2d(128, 64, kernel_size=(1, 1), stride=(1, 1), padding='same'),
             # nn.ReLU(inplace=True),
             # nn.BatchNorm2d(64),
-            # nn.Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding='valid', dilation=(2, 2)),
-            # nn.ReLU(inplace=True),
-            # nn.BatchNorm2d(64),
-            # nn.Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding='valid', dilation=(3, 3)),
-            # nn.ReLU(inplace=True),
-            # nn.BatchNorm2d(64),
-            # nn.Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding='valid', dilation=(4, 5)),
-            # nn.ReLU(inplace=True),
-            # nn.BatchNorm2d(128),
-            # nn.Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding='valid', dilation=(5, 11)),
-            # nn.ReLU(inplace=True),
-            # nn.BatchNorm2d(128),
+            
         )
 
         self.face_cnn = nn.Sequential(
@@ -36,18 +25,7 @@ class GazeModel(nn.Module):
             # nn.Conv2d(128, 64, kernel_size=(1, 1), stride=(1, 1), padding='same'),
             # nn.ReLU(inplace=True),
             # nn.BatchNorm2d(64),
-            # nn.Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding='valid', dilation=(2, 2)),
-            # nn.ReLU(inplace=True),
-            # nn.BatchNorm2d(64),
-            # nn.Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding='valid', dilation=(3, 3)),
-            # nn.ReLU(inplace=True),
-            # nn.BatchNorm2d(64),
-            # nn.Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding='valid', dilation=(5, 5)),
-            # nn.ReLU(inplace=True),
-            # nn.BatchNorm2d(128),
-            # nn.Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding='valid', dilation=(11, 11)),
-            # nn.ReLU(inplace=True),
-            # nn.BatchNorm2d(128),
+
             nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
@@ -76,10 +54,10 @@ class GazeModel(nn.Module):
             lefteye_features = self.eye_cnn(dummy_left)
             righteye_features = self.eye_cnn(dummy_right)
             face_features = self.face_cnn(dummy_face)
-            self.flattened_size = lefteye_features.numel() + righteye_features.numel() + face_features.numel() + 3  # Adding 3 for the pose
+            self.flattened_size = lefteye_features.numel() + righteye_features.numel() + face_features.numel() + 3 + 9 # Adding 3 for the pose, 9 for rotation matrix
             
 
-    def forward(self, image, left, right, pose ):
+    def forward(self, image, left, right, pose,rotation ):
 
         right_eye_features = self.eye_cnn(right.permute(0, 3, 1, 2))
         right_eye_features = right_eye_features.reshape(right_eye_features.size(0), -1)
@@ -89,9 +67,9 @@ class GazeModel(nn.Module):
         
         face_features = self.face_cnn(image.permute(0, 3, 1, 2))
         face_features = face_features.reshape(face_features.size(0), -1)
+        rotation = rotation.reshape(rotation.size(0), -1)
 
-        combined_features = torch.cat([right_eye_features, left_eye_features, face_features, pose.squeeze(dim=2)], dim=1)
-        #print('comb_size', combined_features.numel())
+        combined_features = torch.cat([right_eye_features, left_eye_features, face_features, rotation, pose.squeeze(dim=2)], dim=1)
         gaze = self.fc(combined_features)
 
        
