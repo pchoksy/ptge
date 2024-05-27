@@ -178,6 +178,8 @@ if __name__ == '__main__':
             output_h5_right = group_subject.create_group('right')
             output_h5_gaze = group_subject.create_group('gaze')
             output_h5_pose = group_subject.create_group('pose')
+            output_h5_subject_id = group_subject.create_group('subject_id') 
+
             line_num = 0
             # print(line_num)
             # load sample
@@ -225,6 +227,7 @@ if __name__ == '__main__':
                     output_h5_right[str(line_num).zfill(4)] = img_right
                     output_h5_gaze[str(line_num).zfill(4)] = gaze2d
                     output_h5_pose[str(line_num).zfill(4)] = pose
+                    output_h5_subject_id[str(line_num).zfill(4)] = np.array([int(subject[1:])]) 
                 elif left_or_right == 'right':
                     img_face = cv2.flip(img_face, 1)
                     img_left = cv2.flip(img_left, 1)
@@ -236,24 +239,11 @@ if __name__ == '__main__':
                     output_h5_right[str(line_num).zfill(4)] = img_right
                     output_h5_gaze[str(line_num).zfill(4)] = gaze2d
                     output_h5_pose[str(line_num).zfill(4)] = pose
-                # output_h5_face_dataset = output_h5_face.create_dataset(str(line_num).zfill(4), data=img_face)
-                # output_h5_left_dataset = output_h5_left.create_dataset(str(line_num).zfill(4), data=img_left)
-                # output_h5_right_dataset = output_h5_right.create_dataset(str(line_num).zfill(4), data=img_right)
-                # output_h5_gaze_dataset = output_h5_gaze.create_dataset(str(line_num).zfill(4), data=gaze2d)
-                # output_h5_pose_dataset = output_h5_pose.create_dataset(str(line_num).zfill(4), data=pose)
-
-                # output_h5_face_dataset[:] = img_face
-                # output_h5_gaze_dataset[:] = gaze2d
-                # output_h5_pose_dataset[:] = pose
-                # output_h5_left_dataset[:] = img_left
-                # output_h5_right_dataset[:] = img_right
-
+                    output_h5_subject_id[str(line_num).zfill(4)] = np.array([int(subject[1:])])  # Store subject_id
+                
                 line_num += 1
-    #
-                # if line_num==20:
-                #     output_h5.close()
-                #     exit()
+    
+                
             print(str(subject)+' is done!')
-            # output_h5.close()
-            # exit()
+            
     output_h5.close()
