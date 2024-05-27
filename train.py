@@ -55,6 +55,11 @@ def train():
 
         print(f"Epoch [{epoch+1}/{config.num_epochs}], Loss: {running_loss/len(dataloader)}")
 
+        # Save the model weights after every epoch
+        
+        torch.save(gaze_model.state_dict(), os.path.join(config.save_dir, f'gaze_model_epoch_{epoch+1}.pth'))
+        print(f'Model weights saved for epoch {epoch+1}')
+
 if __name__ == "__main__":
     train()
 
