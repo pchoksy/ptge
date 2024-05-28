@@ -6,7 +6,7 @@ In normalize_data.py, change path of this file on line number: 172
 
      please run: 'python normalize_data.py'
 
-# Train the gaze moadel
+# Train the gaze model
 
 To train model, change path of HDF5 file into config file.
       
