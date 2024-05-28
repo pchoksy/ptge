@@ -6,6 +6,10 @@ from torchvision import models
 class GazeModel(nn.Module):
     def __init__(self):
         super(GazeModel, self).__init__()
+
+        # Embedding layer for subject IDs
+        self.subject_embeddings = nn.Embedding(15, 32)
+
         self.eye_cnn = nn.Sequential(
             nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
@@ -54,10 +58,14 @@ class GazeModel(nn.Module):
             lefteye_features = self.eye_cnn(dummy_left)
             righteye_features = self.eye_cnn(dummy_right)
             face_features = self.face_cnn(dummy_face)
-            self.flattened_size = lefteye_features.numel() + righteye_features.numel() + face_features.numel() + 3 + 9 # Adding 3 for the pose, 9 for rotation matrix
+            self.flattened_size = lefteye_features.numel() + righteye_features.numel() + face_features.numel() + 3 + 9 + 32# Adding 3 for the pose, 9 for rotation matrix
             
 
-    def forward(self, image, left, right, pose,rotation ):
+    def forward(self, image, left, right, pose,rotation,subject_id ):
+
+        # Get the subject embeddings
+        subject_embedding = self.subject_embeddings(subject_id)
+
 
         right_eye_features = self.eye_cnn(right.permute(0, 3, 1, 2))
         right_eye_features = right_eye_features.reshape(right_eye_features.size(0), -1)
@@ -69,11 +77,13 @@ class GazeModel(nn.Module):
         face_features = face_features.reshape(face_features.size(0), -1)
         rotation = rotation.reshape(rotation.size(0), -1)
 
-        combined_features = torch.cat([right_eye_features, left_eye_features, face_features, rotation, pose.squeeze(dim=2)], dim=1)
+        
+        combined_features = torch.cat([right_eye_features, left_eye_features, face_features, rotation, pose.squeeze(dim=2), subject_embedding.squeeze(dim=1)], dim=1)
         gaze = self.fc(combined_features)
+        query = torch.cat([right_eye_features, left_eye_features, face_features, rotation, pose.squeeze(dim=2)], dim=1)
 
        
-        return gaze, combined_features
+        return gaze, query
 
 
 
