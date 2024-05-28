@@ -30,7 +30,7 @@ def train():
     optimizer = optim.Adam(gaze_model.parameters(), lr=config.learning_rate)
 
     gaze_model.train()
-
+    best_val_loss = float('inf')
     for epoch in range(config.num_epochs):
         running_loss = 0.0
         for batch_idx, (data, labels) in enumerate(train_loader):
