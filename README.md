@@ -1,8 +1,14 @@
-# To normalize the MPIIFaceGaze dataset, pleas put the file normalize_data.py in the MPIIFaceGaze folder. You also need the files from MPIIGaze dataset. They are the files in the folder of 'Evaluation Subset/sample list for eye image' and the '.mat' file.
+# Preprocess the data and create HDF5 file
+
+To normalize the MPIIFaceGaze dataset, pleas put the file normalize_data.py in the MPIIFaceGaze folder. You also need the files from MPIIGaze dataset. They are the files in the folder of 'Evaluation Subset/sample list for eye image' and the '.mat' file.
+
+In normalize_data.py, change path of this file on line number: 172
 
      please run: 'python normalize_data.py'
 
-# To train model, change path of HDF5 file into config file.
+# Train the gaze moadel
+
+To train model, change path of HDF5 file into config file.
       
      please run: 'python train.py'
 
