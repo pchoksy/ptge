@@ -41,7 +41,7 @@ def train():
 
             # Forward pass
             gaze, query = gaze_model(
-                data['image'], data['left_eye'], data['right_eye'], data['pose'], data['head_rot']
+                data['image'], data['left_eye'], data['right_eye'], data['pose'], data['head_rot'], data['subject_id'].long()
             )
             
             # Calculate loss
@@ -64,7 +64,7 @@ def train():
                 labels = {k: v.to(config.device) for k, v in labels.items()}
 
                 gaze, query = gaze_model(
-                    data['image'], data['left_eye'], data['right_eye'], data['pose'], data['head_rot']
+                    data['image'], data['left_eye'], data['right_eye'], data['pose'], data['head_rot'], data['subject_id'].long()
                 )
                 
                 loss = criterion(gaze, labels['gaze'])
@@ -74,7 +74,7 @@ def train():
         print(f"Epoch [{epoch+1}/{config.num_epochs}], Validation Loss: {val_loss}")
 
         # Save the model weights after every epoch
-         if val_loss < best_val_loss:
+        if val_loss < best_val_loss:
             best_val_loss = val_loss
             torch.save(gaze_model.state_dict(), os.path.join(config.save_dir, 'best_gaze_model.pth'))
             print(f'Best model weights saved at epoch {epoch+1} with validation loss {val_loss}')
