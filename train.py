@@ -1,5 +1,6 @@
 import os
 import torch
+import math
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, Subset
@@ -8,6 +9,18 @@ from dataset import GazeDataset
 from gaze_model import GazeModel
 from utils import HuberLoss
 from config import config
+
+def gaze_to_vector(yaw, pitch):
+    x = -torch.cos(pitch) * torch.sin(yaw)
+    y = -torch.sin(pitch)
+    z = -torch.cos(pitch) * torch.cos(yaw)
+    return torch.stack([x, y, z], dim=1)
+
+def angular_error(pred_gaze, true_gaze):
+    pred_gaze = pred_gaze / torch.norm(pred_gaze, dim=1, keepdim=True)
+    true_gaze = true_gaze / torch.norm(true_gaze, dim=1, keepdim=True)
+    dot_product = torch.sum(pred_gaze * true_gaze, dim=1)
+    return torch.acos(torch.clamp(dot_product, -1.0, 1.0)) * (180.0 / torch.tensor(math.pi))
 
 def train():
     # Load the dataset
@@ -58,6 +71,7 @@ def train():
         # Validation step
         gaze_model.eval()
         val_loss = 0.0
+        total_angular_error = 0.0
         with torch.no_grad():
             for batch_idx, (data, labels) in enumerate(val_loader):
                 data = {k: v.to(config.device) for k, v in data.items()}
@@ -70,8 +84,17 @@ def train():
                 loss = criterion(gaze, labels['gaze'])
                 val_loss += loss.item()
 
+
+                # Calculate angular error
+                pred_gaze_vector = gaze_to_vector(gaze[:, 1], gaze[:, 0])
+                true_gaze_vector = gaze_to_vector(labels['gaze'][:, 1], labels['gaze'][:, 0])
+                angular_err = angular_error(pred_gaze_vector, true_gaze_vector)
+                total_angular_error += torch.sum(angular_err).item()
+
+
         val_loss /= len(val_loader)
-        print(f"Epoch [{epoch+1}/{config.num_epochs}], Validation Loss: {val_loss}")
+        avg_angular_error = total_angular_error / len(val_dataset)
+        print(f"Epoch [{epoch+1}/{config.num_epochs}], Validation Loss: {val_loss}, Angular Error: {avg_angular_error} degrees")
 
         # Save the model weights after every epoch
         if val_loss < best_val_loss:
