@@ -38,8 +38,8 @@ class GazeDataset(Dataset):
                                 'left_eye': img_left,
                                 'right_eye': img_right,
                                 'pose': pose,
-                                'head_rot':rotation
-                                'subject_id': subject_id
+                                'head_rot':rotation,
+                                'subject_id':subject_id
                             })
 
                             self.labels.append({
