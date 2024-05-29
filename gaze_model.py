@@ -58,7 +58,7 @@ class GazeModel(nn.Module):
             lefteye_features = self.eye_cnn(dummy_left)
             righteye_features = self.eye_cnn(dummy_right)
             face_features = self.face_cnn(dummy_face)
-            self.flattened_size = lefteye_features.numel() + righteye_features.numel() + face_features.numel() + 3 + 9 + 32# Adding 3 for the pose, 9 for rotation matrix
+            self.flattened_size = lefteye_features.numel() + righteye_features.numel() + face_features.numel() + 3 + 9 + 16# Adding 3 for the pose, 9 for rotation matrix
             
 
     def forward(self, image, left, right, pose,rotation,subject_id ):
