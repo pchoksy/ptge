@@ -6,10 +6,14 @@ In normalize_data.py, change path of this file on line number: 172
 
      please run: 'python normalize_data.py'
 
-# Train the gaze model
+# Train the gaze model and calibration model
 
-To train model, change path of HDF5 file into config file.
+To train model, create folder name 'weights'and change necessary path into config file.
       
-     please run: 'python train.py'
+     please run: 'python gaze_train.py'
+     please run: 'python calibration_train.py'
 
+# Test the model
+Test model prints ground truth gaze and predicted gaze along with their angular error. Change necessary path into config file
 
+     please run: 'python test.py'
