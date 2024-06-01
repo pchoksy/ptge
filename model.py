@@ -67,7 +67,7 @@ class GazeModel(nn.Module):
     def forward(self, image, left, right, pose,rotation,subject_id ):
 
         # Get the subject embeddings
-        print(subject_id)
+        #print(subject_id)
         subject_embedding = self.subject_embeddings(subject_id)
 
 
