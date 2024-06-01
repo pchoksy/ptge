@@ -6,9 +6,10 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Subset
 from sklearn.model_selection import train_test_split
 from dataset import GazeDataset
-from gaze_model import GazeModel
+from model import GazeModel
 from utils import HuberLoss
 from config import config
+
 
 def gaze_to_vector(yaw, pitch):
     x = -torch.cos(pitch) * torch.sin(yaw)
@@ -27,8 +28,10 @@ def train():
     dataset = GazeDataset(config.hdf5_path)
 
     # Split dataset into training and validation subsets
-    indices = list(range(len(dataset)))
-    train_indices, val_indices = train_test_split(indices, test_size=0.2, random_state=42)
+    # indices = list(range(len(dataset)))
+    # train_indices, val_indices = train_test_split(indices, test_size=0.2, random_state=42)
+    indices = list(range(1000))
+    train_indices, val_indices = train_test_split(indices, test_size=0.1, random_state=42)
 
     train_dataset = Subset(dataset, train_indices)
     val_dataset = Subset(dataset, val_indices)
@@ -43,7 +46,9 @@ def train():
     optimizer = optim.Adam(gaze_model.parameters(), lr=config.learning_rate)
 
     gaze_model.train()
+
     best_val_loss = float('inf')
+
     for epoch in range(config.num_epochs):
         running_loss = 0.0
         for batch_idx, (data, labels) in enumerate(train_loader):
