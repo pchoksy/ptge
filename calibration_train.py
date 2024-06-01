@@ -15,9 +15,7 @@ def train_calibration_model():
     # Split dataset into training and validation subsets
     indices = list(range(len(dataset)))
     train_indices, val_indices = train_test_split(indices, test_size=0.2, random_state=42)
-    #indices = list(range(1000))
-    #train_indices, val_indices = train_test_split(indices, test_size=0.1, random_state=42)
-
+    
     train_dataset = Subset(dataset, train_indices)
     val_dataset = Subset(dataset, val_indices)
 
