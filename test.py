@@ -106,7 +106,7 @@ def test_gaze_model(gaze_model, calibration_model, dataset):
 def main():
     # Load the dataset
     # Load the dataset
-    dataset = GazeDataset(config.hdf5_path) #give path to test dataset
+    dataset = GazeDataset(config.test_hdf5_path) #give path to test dataset
 
     # Load the trained models
     gaze_model, calibration_model = load_models()
