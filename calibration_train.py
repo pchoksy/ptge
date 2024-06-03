@@ -33,7 +33,7 @@ def train_calibration_model():
         nhead=8,
         num_encoder_layers=4,
         dim_feedforward=512,
-        output_dim=32  # The output dimension is now 16 for the embedding vector
+        output_dim=16  # The output dimension is now 16 for the embedding vector
     ).to(config.device)
 
     criterion = nn.MSELoss()
