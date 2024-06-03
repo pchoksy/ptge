@@ -11,7 +11,7 @@ class GazeModel(nn.Module):
         super(GazeModel, self).__init__()
 
         # Embedding layer for subject IDs
-        self.subject_embeddings = nn.Embedding(15, 32)
+        self.subject_embeddings = nn.Embedding(15, 16)
 
         self.eye_cnn = nn.Sequential(
             nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
